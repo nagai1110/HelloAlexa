@@ -18,5 +18,9 @@
   "homepage": "https://github.com/nagai1110/HelloAlexa#readme",
   "dependencies": {
     "ask-sdk": "^2.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.55",
+    "typescript": "^4.0.2"
   }
 }
