@@ -1,0 +1,3 @@
+#!/bin/bash
+rm hello_alexa.zip
+zip hello_alexa.zip -r node_modules index.js
