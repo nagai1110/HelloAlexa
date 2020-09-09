@@ -1,6 +1,6 @@
-import Alexa from 'ask-sdk-core';
+const Alexa = require('ask-sdk-core');
 
-const LaunchRequestHandler ={
+const LaunchRequestHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
@@ -73,6 +73,8 @@ const SessionEndedRequestHandler = {
   }
 };
 
+let skill;
+
 const ErrorHandler = {
   canHandle() {
     return true;
@@ -87,7 +89,6 @@ const ErrorHandler = {
   },
 };
 
-let skill;
 exports.handler = async function (event, context) {
   console.log(`REQUEST++++${JSON.stringify(event)}`);
   if (!skill) {
