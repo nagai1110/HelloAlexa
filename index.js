@@ -75,6 +75,20 @@ const SessionEndedRequestHandler = {
 
 let skill;
 
+const ErrorHandler = {
+  canHandle() {
+    return true;
+  },
+  handle(handlerInput, error) {
+    console.log(`処理されたエラー： ${error.message}`);
+
+    return handlerInput.responseBuilder
+      .speak('すみません。コマンドを理解できませんでした。もう一度お願いします。')
+      .reprompt('すみません。コマンドを理解できませんでした。もう一度お願いします。')
+      .getResponse();
+  },
+};
+
 exports.handler = async function (event, context) {
   console.log(`REQUEST++++${JSON.stringify(event)}`);
   if (!skill) {
