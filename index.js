@@ -5,27 +5,21 @@ const LaunchRequestHandler = {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   handle(handlerInput) {
-    const speechText = 'ようこそ、アレクサスキルキットへ。こんにちは、と言ってみてください。';
-
     return handlerInput.responseBuilder
-      .speak(speechText)
-      .reprompt(speechText)
-      .withSimpleCard('ハローワールド', speechText)
+      .speak('おはようございます。今日のスピーチ当番は？と話しかけることで、今日のスピーチ当番を確認することができます。')
+      .reprompt('今日のスピーチ当番は？と聞いてみてください。')
       .getResponse();
   }
 };
 
-const HelloWorldIntentHandler = {
+const TodaySpeechIntentHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && handlerInput.requestEnvelope.request.intent.name === 'HelloWorldIntent';
+      && handlerInput.requestEnvelope.request.intent.name === 'TodaySpeechIntent';
   },
   handle(handlerInput) {
-    const speechText = 'こんにちは';
-
     return handlerInput.responseBuilder
-      .speak(speechText)
-      .withSimpleCard('ハローワールド', speechText)
+      .speak('今日の当番はnagaiさんです。')
       .getResponse();
   }
 };
@@ -36,12 +30,11 @@ const HelpIntentHandler = {
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
   handle(handlerInput) {
-    const speechText = 'こんにちは、と言ってみてください。';
+    const speechText = '今日の当番は？と言ってみてください。';
 
     return handlerInput.responseBuilder
       .speak(speechText)
       .reprompt(speechText)
-      .withSimpleCard('ハローワールド', speechText)
       .getResponse();
   }
 };
@@ -53,11 +46,8 @@ const CancelAndStopIntentHandler = {
         || handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent');
   },
   handle(handlerInput) {
-    const speechText = 'さようなら';
-
     return handlerInput.responseBuilder
-      .speak(speechText)
-      .withSimpleCard('ハローワールド', speechText)
+      .speak('さようなら。明日の当番はosakaさんです。')
       .withShouldEndSession(true)
       .getResponse();
   }
@@ -83,8 +73,8 @@ const ErrorHandler = {
     console.log(`処理されたエラー： ${error.message}`);
 
     return handlerInput.responseBuilder
-      .speak('すみません。コマンドを理解できませんでした。もう一度お願いします。')
-      .reprompt('すみません。コマンドを理解できませんでした。もう一度お願いします。')
+      .speak('すみません。理解できませんでした。もう一度お願いします。')
+      .reprompt('すみません。理解できませんでした。もう一度お願いします。')
       .getResponse();
   },
 };
@@ -95,7 +85,7 @@ exports.handler = async function (event, context) {
     skill = Alexa.SkillBuilders.custom()
       .addRequestHandlers(
         LaunchRequestHandler,
-        HelloWorldIntentHandler,
+        TodaySpeechIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
