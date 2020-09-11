@@ -1,10 +1,18 @@
 const Alexa = require('ask-sdk-core');
+const { DynamoDbPersistenceAdapter } = require('ask-sdk-dynamodb-persistence-adapter');
+
+const dynamoDbAdapter = new DynamoDbPersistenceAdapter({ tableName : 'peopleTable', createTable : true })
 
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
-  handle(handlerInput) {
+  async handle(handlerInput) {
+    // DynamoDB test
+    const attributesManager = handlerInput.attributesManager;
+    attributesManager.setPersistentAttributes({"counter":10}); 
+    await attributesManager.savePersistentAttributes();
+
     return handlerInput.responseBuilder
       .speak('おはようございます。今日のスピーチ当番は？と話しかけることで、今日のスピーチ当番を確認することができます。')
       .reprompt('今日のスピーチ当番は？と聞いてみてください。')
@@ -17,9 +25,13 @@ const TodaySpeechIntentHandler = {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && handlerInput.requestEnvelope.request.intent.name === 'TodaySpeechIntent';
   },
-  handle(handlerInput) {
+  async handle(handlerInput) {
+    const attributesManager = handlerInput.attributesManager;
+    const s3Attributes = await attributesManager.getPersistentAttributes();
+
     return handlerInput.responseBuilder
-      .speak('今日の当番はnagaiさんです。')
+      // DynamoDB test
+      .speak(`今日の当番はnagaiさんです。カウンターは${s3Attributes.counter}です。`)
       .getResponse();
   }
 };
@@ -91,6 +103,7 @@ exports.handler = async function (event, context) {
         SessionEndedRequestHandler,
       )
       .addErrorHandlers(ErrorHandler)
+      .withPersistenceAdapter(dynamoDbAdapter)
       .create();
   }
 
