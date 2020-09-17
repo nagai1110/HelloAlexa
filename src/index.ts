@@ -1,13 +1,13 @@
-const Alexa = require('ask-sdk-core');
-const { DynamoDbPersistenceAdapter } = require('ask-sdk-dynamodb-persistence-adapter');
+import { HandlerInput, RequestHandler, Skill, SkillBuilders } from 'ask-sdk';
+import { DynamoDbPersistenceAdapter } from 'ask-sdk-dynamodb-persistence-adapter';
 
 const dynamoDbAdapter = new DynamoDbPersistenceAdapter({ tableName : 'peopleTable', createTable : true })
 
-const LaunchRequestHandler = {
-  canHandle(handlerInput) {
+const LaunchRequestHandler: RequestHandler = {
+  canHandle(handlerInput: HandlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
-  async handle(handlerInput) {
+  async handle(handlerInput: HandlerInput) {
     // DynamoDB test
     const attributesManager = handlerInput.attributesManager;
     attributesManager.setPersistentAttributes({"counter":10}); 
@@ -20,12 +20,12 @@ const LaunchRequestHandler = {
   }
 };
 
-const TodaySpeechIntentHandler = {
-  canHandle(handlerInput) {
+const TodaySpeechIntentHandler: RequestHandler  = {
+  canHandle(handlerInput: HandlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && handlerInput.requestEnvelope.request.intent.name === 'TodaySpeechIntent';
   },
-  async handle(handlerInput) {
+  async handle(handlerInput: HandlerInput) {
     const attributesManager = handlerInput.attributesManager;
     const s3Attributes = await attributesManager.getPersistentAttributes();
 
@@ -36,12 +36,12 @@ const TodaySpeechIntentHandler = {
   }
 };
 
-const HelpIntentHandler = {
-  canHandle(handlerInput) {
+const HelpIntentHandler: RequestHandler  = {
+  canHandle(handlerInput: HandlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
   },
-  handle(handlerInput) {
+  handle(handlerInput: HandlerInput) {
     const speechText = '今日の当番は？と言ってみてください。';
 
     return handlerInput.responseBuilder
@@ -51,13 +51,13 @@ const HelpIntentHandler = {
   }
 };
 
-const CancelAndStopIntentHandler = {
-  canHandle(handlerInput) {
+const CancelAndStopIntentHandler: RequestHandler  = {
+  canHandle(handlerInput: HandlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
       && (handlerInput.requestEnvelope.request.intent.name === 'AMAZON.CancelIntent'
         || handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent');
   },
-  handle(handlerInput) {
+  handle(handlerInput: HandlerInput) {
     return handlerInput.responseBuilder
       .speak('さようなら。明日の当番はosakaさんです。')
       .withShouldEndSession(true)
@@ -65,23 +65,22 @@ const CancelAndStopIntentHandler = {
   }
 };
 
-const SessionEndedRequestHandler = {
-  canHandle(handlerInput) {
+const SessionEndedRequestHandler: RequestHandler  = {
+  canHandle(handlerInput: HandlerInput) {
     return handlerInput.requestEnvelope.request.type === 'SessionEndedRequest';
   },
-  handle(handlerInput) {
+  handle(handlerInput: HandlerInput) {
     //クリーンアップロジックをここに追加します
     return handlerInput.responseBuilder.getResponse();
   }
 };
 
-let skill;
-
+let skill: Skill;
 const ErrorHandler = {
   canHandle() {
     return true;
   },
-  handle(handlerInput, error) {
+  handle(handlerInput: HandlerInput, error: Error) {
     console.log(`処理されたエラー： ${error.message}`);
 
     return handlerInput.responseBuilder
@@ -91,10 +90,10 @@ const ErrorHandler = {
   },
 };
 
-exports.handler = async function (event, context) {
+exports.handler = async function (event: any, context: any) {
   console.log(`REQUEST++++${JSON.stringify(event)}`);
   if (!skill) {
-    skill = Alexa.SkillBuilders.custom()
+    skill = SkillBuilders.custom()
       .addRequestHandlers(
         LaunchRequestHandler,
         TodaySpeechIntentHandler,
