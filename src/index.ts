@@ -1,18 +1,13 @@
 import { HandlerInput, RequestHandler, Skill, SkillBuilders } from 'ask-sdk';
-import { DynamoDbPersistenceAdapter } from 'ask-sdk-dynamodb-persistence-adapter';
+// import { DynamoDbPersistenceAdapter } from 'ask-sdk-dynamodb-persistence-adapter';
 
-const dynamoDbAdapter = new DynamoDbPersistenceAdapter({ tableName : 'peopleTable', createTable : true })
+// const dynamoDbAdapter = new DynamoDbPersistenceAdapter({ tableName : 'peopleTable', createTable : true })
 
 const LaunchRequestHandler: RequestHandler = {
   canHandle(handlerInput: HandlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
   },
   async handle(handlerInput: HandlerInput) {
-    // DynamoDB test
-    const attributesManager = handlerInput.attributesManager;
-    attributesManager.setPersistentAttributes({"counter":10}); 
-    await attributesManager.savePersistentAttributes();
-
     return handlerInput.responseBuilder
       .speak('おはようございます。今日のスピーチ当番は？と話しかけることで、今日のスピーチ当番を確認することができます。')
       .reprompt('今日のスピーチ当番は？と聞いてみてください。')
@@ -26,12 +21,9 @@ const TodaySpeechIntentHandler: RequestHandler  = {
       && handlerInput.requestEnvelope.request.intent.name === 'TodaySpeechIntent';
   },
   async handle(handlerInput: HandlerInput) {
-    const attributesManager = handlerInput.attributesManager;
-    const s3Attributes = await attributesManager.getPersistentAttributes();
-
     return handlerInput.responseBuilder
       // DynamoDB test
-      .speak(`今日の当番はnagaiさんです。カウンターは${s3Attributes.counter}です。`)
+      .speak(`今日の当番はnagaiさんです。`)
       .getResponse();
   }
 };
@@ -75,7 +67,6 @@ const SessionEndedRequestHandler: RequestHandler  = {
   }
 };
 
-let skill: Skill;
 const ErrorHandler = {
   canHandle() {
     return true;
@@ -90,7 +81,8 @@ const ErrorHandler = {
   },
 };
 
-exports.handler = async function (event: any, context: any) {
+let skill: Skill;
+export const handler = async (event: any, context: any): Promise<any> => {
   console.log(`REQUEST++++${JSON.stringify(event)}`);
   if (!skill) {
     skill = SkillBuilders.custom()
@@ -102,7 +94,6 @@ exports.handler = async function (event: any, context: any) {
         SessionEndedRequestHandler,
       )
       .addErrorHandlers(ErrorHandler)
-      .withPersistenceAdapter(dynamoDbAdapter)
       .create();
   }
 
@@ -110,4 +101,4 @@ exports.handler = async function (event: any, context: any) {
   console.log(`RESPONSE++++${JSON.stringify(response)}`);
 
   return response;
-};
+}
