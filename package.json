@@ -4,6 +4,7 @@
   "description": "Alexa Skill Hello World",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
     "test": "jest"
   },
   "repository": {

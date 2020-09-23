@@ -1,6 +1,6 @@
 #!/bin/bash
 rm hello_alexa.zip
 rm -r dist
-npx tsc
+npm run build
 
 zip hello_alexa.zip -r node_modules -r dist
