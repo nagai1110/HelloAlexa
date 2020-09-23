@@ -1,0 +1,2 @@
+#!/bin/bash
+ask smapi get-interaction-model --skill-id amzn1.ask.skill.2db69411-ffd2-4de3-a6d9-00bad449885d --locale ja-JP > ./interaction_models/model_ja-JP.json
